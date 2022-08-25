@@ -538,6 +538,639 @@ public class DNAMath
     */
 
 
+    public static List<string> getAlphabet ()
+    {
+        List<string> idk = new List<string>();
+
+        idk.Add("a");
+        idk.Add("b");
+        idk.Add("c");
+        idk.Add("d");
+        idk.Add("e");
+        idk.Add("f");
+        idk.Add("g");
+        idk.Add("h");
+        idk.Add("i");
+        idk.Add("j");
+        idk.Add("k");
+        idk.Add("l");
+        idk.Add("m");
+        idk.Add("n");
+        idk.Add("o");
+        idk.Add("p");
+        idk.Add("q");
+        idk.Add("r");
+        idk.Add("s");
+        idk.Add("t");
+        idk.Add("u");
+        idk.Add("v");
+        idk.Add("w");
+        idk.Add("x");
+        idk.Add("y");
+        idk.Add("z");
+
+        idk.Add("A");
+        idk.Add("B");
+        idk.Add("C");
+        idk.Add("D");
+        idk.Add("E");
+        idk.Add("F");
+        idk.Add("G");
+        idk.Add("H");
+        idk.Add("I");
+        idk.Add("J");
+        idk.Add("K");
+        idk.Add("L");
+        idk.Add("M");
+        idk.Add("N");
+        idk.Add("O");
+        idk.Add("P");
+        idk.Add("Q");
+        idk.Add("R");
+        idk.Add("S");
+        idk.Add("T");
+        idk.Add("U");
+        idk.Add("V");
+        idk.Add("W");
+        idk.Add("X");
+        idk.Add("Y");
+        idk.Add("Z");
+
+        return idk;
+
+    }
+
+    public static float getMeasurement (string inputS, float oldVal)
+    {
+        //Wrap this in a function
+        //Make a function to add the alphabet
+        List<string> letters = DNAMath.getAlphabet();
+
+        //If it fails strip all the letters and then look at all the combinations of units
+        string input = inputS;
+        string numOn = inputS;
+
+        string newText = "";
+
+        //Clean the numOn
+        foreach (char i in numOn)
+        {
+            bool number = true;
+
+            for (int j = 0; j < letters.Count; j++)
+            {
+                if (letters[j] == i.ToString())
+                {
+                    number = false;
+                    Debug.Log("Not a Number");
+                    Debug.Log(i);
+                }
+
+                if (number == false)
+                {
+                    j = letters.Count;
+                }
+            }
+
+            if (number)
+            {
+                newText = newText + i.ToString();
+            }
+            Debug.Log(newText);
+        }
+
+        float num = float.Parse(newText);
+
+
+        if (num + "m" == input || num + "M" == input)
+        {
+            return num;
+            
+        }
+        else
+        {
+            return oldVal;
+            
+        }
+
+    }
+
+
+    public static string convertToTimeFormat (float seconds)
+    {
+        //Convert to time 
+        string timeVal = "";
+
+        int hour;
+        int min;
+        int sec;
+        float rem;
+
+        hour = (int)seconds / 3600;
+        //- hour * 3600
+        rem = seconds % 3600;
+        min = (int)rem / 60;
+        //- min * 60
+        rem = rem % 60;
+        sec = (int)rem / 1;
+        rem = rem % 1;
+
+        if (hour > 0)
+        {
+            //Include hour
+            timeVal = DNAMath.accurateTime(hour) + ":" + DNAMath.accurateTime(min) + ":" + DNAMath.accurateTime(sec) + "." + cutOff(string.Format("{0:0.00}", rem), 2, 4);
+
+        }
+        else
+        {
+            timeVal = DNAMath.accurateTime(min) + ":" + DNAMath.accurateTime(sec) + "." +  cutOff(string.Format("{0:0.00}", rem), 2, 4);
+        }
+
+        return timeVal;
+        
+    }
+
+    public static bool compareVector (Vector3 Vec1, Vector3 Vec2)
+    {
+
+        if (snapToUnit(Vec1.x, 0.1f) == snapToUnit(Vec2.x, 0.1f))
+        {
+            if (snapToUnit(Vec1.y, 0.1f) == snapToUnit(Vec2.y, 0.1f))
+            {
+                if (snapToUnit(Vec1.z, 0.1f) == snapToUnit(Vec2.z, 0.1f))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        } else
+        {
+            return false;
+        }
+
+    }
+
+    public static string cutOff (string str, int start, int end)
+    {
+        string newStr = "";
+
+
+        for (int i = start; i < end; i ++)
+        {
+            newStr = newStr + str[i];
+        }
+
+        return newStr;
+
+    }
+
+    public static float calcSlope(float length, float finaltime)
+    {
+        return (2 * length) / Mathf.Pow(finaltime, 2);
+    }
+
+    public static float linEq(float slope, float x)
+    {
+        return slope * x;
+    }
+
+
+    //These ones only work on desktop and at least only in unity
+    
+    public static List<string> extractText2(string path, string fileName = "")
+    {
+        //Change this system to look if the past 2 lines were empty probably by looking if they were the same
+        List<string> strs = new List<string>();
+        StreamReader reader = new StreamReader(path + fileName);
+
+        //Read first line to get number
+        int LineNumber = int.Parse(reader.ReadLine());
+        reader.ReadLine();
+
+        for (int i = 0; i < LineNumber; i++)
+        {
+            strs.Add(reader.ReadLine());
+            reader.ReadLine();
+        }
+
+        return strs;
+    }
+    
+    /*
+    public static List<string> extractImagePaths(string path)
+    {
+        List<string> images = new List<string>();
+        DirectoryInfo dir = new DirectoryInfo(path);
+
+        foreach (var file in dir.GetFiles("*.png"))
+        {
+            string filePath = removeStr(removeStr(replace(removeUpTo(file.FullName, "Resources"), "\\", "/"), "Resources/"), ".png");
+            images.Add(filePath);
+        }
+        foreach (var file in dir.GetFiles("*.jpg"))
+        {
+            string filePath = removeStr(removeStr(replace(removeUpTo(file.FullName, "Resources"), "\\", "/"), "Resources/"), ".jpg");
+            images.Add(filePath);
+        }
+
+        Debug.Log(images[0]);
+        return images;
+    }
+    */
+    
+
+    public static List<string> extractText (string path)
+    {
+
+        var temp = Resources.Load(path).ToString().Split("\n");
+
+        List<string> list = new List<string>();
+
+        foreach (string i in temp)
+        {
+           // Debug.Log(i);
+            list.Add(i);
+        }
+
+        return list;
+    }
+
+    public static List<string> extractImages (string path)
+    {
+       path = removeStr (removeUpTo(path, "Resources"), "Resources/");
+
+        var temp = Resources.Load(path).ToString().Split("!!!"); //!!! is a custom Splitter
+
+        List<string> list = new List<string>();
+
+        foreach (string i in temp)
+        {
+            if (i.Contains(".png"))
+            {
+                list.Add(removeStr(removeStr(replace(removeUpTo(i, "Resources"), "\\", "/"), "Resources/"), ".png"));
+            } else
+            {
+                list.Add(removeStr(removeStr(replace(removeUpTo(i, "Resources"), "\\", "/"), "Resources/"), ".jpg"));
+            }
+            
+        }
+
+        return list;
+    }
+
+    public static string removeUpTo(string input, string upTo)
+    {
+        bool completeWord = false;
+
+        string newStr = "";
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            if (input[i] == upTo[0] && completeWord == false)
+            {
+                for (int j = 0; j < upTo.Length; j++)
+                {
+                    if (input[i + j] == upTo[j])
+                    {
+                        if (j == (upTo.Length - 1))
+                        {
+                            completeWord = true;
+                        }
+                    }
+                    else
+                    {
+                        j = upTo.Length;
+                    }
+                }
+            }
+
+            if (completeWord)
+            {
+                newStr += input[i];
+            }
+        }
+
+
+        if (newStr == "")
+        {
+            return input;
+        } else
+        {
+            return newStr;
+        }
+        
+    }
+
+    public static string replace(string input, string remove, string replace)
+    {
+        string newStr = "";
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            bool completeWord = false;
+            if (input[i] == remove[0] && completeWord == false)
+            {
+                for (int j = 0; j < remove.Length; j++)
+                {
+                    if (input[i + j] == remove[j])
+                    {
+                        if (j == (remove.Length - 1))
+                        {
+                            completeWord = true;
+                        }
+                    }
+                    else
+                    {
+                        j = remove.Length;
+                    }
+                }
+            }
+            if (completeWord)
+            {
+                newStr += replace;
+                i += remove.Length - 1;
+            }
+            else
+            {
+                newStr += input[i];
+            }
+        }
+        if (newStr == "")
+        {
+            return input;
+        }
+        else
+        {
+            return newStr;
+        }
+    }
+
+    public static string removeStr(string input, string remove)
+    {
+        return input.Replace(remove, "");
+    }
+
+    public static GameObject extractModel(string path)
+    {
+        return GameObject.Instantiate(Resources.Load(removeStr(removeStr(replace(removeUpTo(Resources.Load(removeStr(removeStr(replace(removeUpTo(path, "Resources"), "\\", "/"), "Resources/"), ".fbx")).ToString(), "Resources"), "\\", "/"), "Resources/"), ".fbx")) as GameObject);
+    }
+
+    public static GameObject extractModelFromDirPath (string path)
+    {
+        return GameObject.Instantiate(Resources.Load(removeStr(removeStr(replace(removeUpTo(path, "Resources"), "\\", "/"), "Resources/"), ".fbx")) as GameObject);
+    }
+
+    public static bool checkMobile()
+    {
+        switch (Application.platform)
+        {
+            case RuntimePlatform.Android:
+                return true;
+            case RuntimePlatform.IPhonePlayer:
+                return true;
+            case RuntimePlatform.BlackBerryPlayer:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static string delLastCharIf (string input, string chr)
+    {
+        if (input[input.Length-1].ToString() == chr)
+        {
+            Debug.Log("Same Char");
+        }
+        return "hello";
+    }
+
+    public static string removeLastxChars (string input, int num)
+    {
+        string newstr = "";
+
+        for (int i = 0; i < input.Length - (1 + num); i ++)
+        {
+            newstr += input[i];
+        }
+
+        return newstr;
+    }
+
+    public static bool mouseClick ()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0)  || (Input.touchCount > 0 && Input.GetTouch(0).deltaTime < 0.1f))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
+    public static bool mouseHold ()
+    {
+        if (Input.GetKey(KeyCode.Mouse0) || Input.touchCount > 0)
+        {
+
+            return true;
+        }
+        
+        if (Input.touchCount > 0)
+        {
+            if (Input.GetTouch(0).deltaTime > 0.1f)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
+        } else
+        {
+            return false;
+        }
+
+        
+    }
+
+    public static Vector2 getMousePos ()
+    {
+        if (checkMobile())
+        {
+            //Mobile
+
+            if (Input.touchCount > 0)
+            {
+                return Input.GetTouch(0).position;
+            } else
+            {
+                return new Vector2(0, 0);
+            }
+
+        }
+        else
+        {
+            //Desktop
+            return Input.mousePosition;
+        }
+    }
+
+    public static void DrawLine(Vector3 start, Vector3 end, Color color, GameObject parent)
+    {
+        GameObject line = new GameObject("ThinLine");
+        line.transform.localPosition = start;
+        line.AddComponent<LineRenderer>();
+        line.transform.parent = parent.transform;
+        LineRenderer lr = line.GetComponent<LineRenderer>();
+        lr.material.color = color;
+        lr.startWidth = 0.1f;
+        lr.endWidth = 0.1f;
+        lr.SetPosition(0, start);
+        lr.SetPosition(1, end);
+        lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+    }
+
+    public static void DrawSquare(Vector3 start, Vector3 end, GameObject parent, Color color)
+    {
+        //Corner 2                   Corner 3
+
+
+
+        //Corner 1                   Corner 4
+
+        Vector3 Corner1 = start;
+        Vector3 Corner2 = start;
+        Corner2.z = end.z;
+        Vector3 Corner3 = end;
+        Vector3 Corner4 = end;
+        Corner4.z = Corner1.z;
+
+        DrawLine(Corner1, Corner2, color, parent);
+        DrawLine(Corner2, Corner3, color, parent);
+        DrawLine(Corner3, Corner4, color, parent);
+        DrawLine(Corner4, Corner1, color, parent);
+
+    }
+
+    public static Vector3 getGlobalPos(float unit = 0, float baseheight = 0, Text text = null)
+    {
+        Vector3 pos = Vector3.one;
+
+        Ray ray = Camera.main.ScreenPointToRay(DNAMath.getMousePos());
+       // text.text = 
+        if (Physics.Raycast(ray, out RaycastHit raycastHit, 20))
+        {
+            pos = raycastHit.point;
+        }
+        else
+        {
+            // pos = cursor.transform.position;
+        }
+        pos.y = baseheight;
+
+        if (unit == 0)
+        {
+            return new Vector3(pos.x, pos.y, pos.z);
+        }
+        else
+        {
+            return new Vector3(DNAMath.snapToUnit(pos.x, unit), pos.y, DNAMath.snapToUnit(pos.z, unit));
+        }
+        
+
+    }
+
+    public static float getUnitConversion (string inputS, float oldVal)
+    {
+        //Wrap this in a function
+        //Make a function to add the alphabet
+        List<string> letters = DNAMath.getAlphabet();
+
+        //If it fails strip all the letters and then look at all the combinations of units
+        string input = inputS;
+        string numOn = inputS;
+
+        string newText = "";
+
+        //Clean the numOn
+        foreach (char i in numOn)
+        {
+            bool number = true;
+
+            for (int j = 0; j < letters.Count; j++)
+            {
+                if (letters[j] == i.ToString())
+                {
+                    number = false;
+                  //  Debug.Log("Not a Number");
+                  //  Debug.Log(i);
+                }
+
+                if (number == false)
+                {
+                    j = letters.Count;
+                }
+            }
+
+            if (number)
+            {
+                newText = newText + i.ToString();
+            }
+        }
+        float num = float.Parse(newText);
+
+        if (num >= 0)
+        {
+            if (num + "k" == input || num + "K" == input)
+            {
+                //x1000   Kila
+                return num * 1000;
+
+            }
+            else if (num + "m" == input || num + "M" == input)
+            {
+                //x1 000 000  Mega
+                return num * 1000000;
+            }
+            else
+            {
+                return oldVal;
+            }
+        } else
+        {
+            return oldVal;
+        }
+
+      
+
+    }
+
+    public static string unitToString (float value, string unit)
+    {
+        string str = "";
+        if (value >= 1000000)
+        {
+            str = ((float)value / 1000000f).ToString() + "M" + unit;
+        } else if (value >= 1000)
+        {
+            str = ((float)value / 1000f).ToString() + "K" + unit;
+        } else
+        {
+            str = value.ToString() + unit;
+        }
+
+       
+        return str;
+
+
+    }
 
 
 
